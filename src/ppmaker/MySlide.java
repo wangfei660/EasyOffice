@@ -5,18 +5,32 @@
  */
 package ppmaker;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Freddie
  */
-public class DataRow {
+public class MySlide {
+
+    public ArrayList<SlideText> replacementData;
+    
+    public MySlide(){
+        replacementData = new ArrayList<>();
+    }
+}
+
+class SlideText {
+
     public String key;
     public String value;
 
-    public DataRow(){}
-    
-    public DataRow(String key, String value) {
+    public SlideText() {
+    }
+
+    public SlideText(String key, String value) {
         this.key = key;
         this.value = value;
     }
+
 }

@@ -15,6 +15,7 @@ import java.util.HashMap;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFSlideLayout;
+import org.apache.poi.xslf.usermodel.XSLFTextShape;
 
 /**
  *
@@ -25,11 +26,12 @@ public class PPMaker {
     final static String EXAMPLE_PPT_NAME = "example1.pptx";
     final static String DATA_FILE_NAME = "data.txt";
 
-    private static XMLSlideShow openPpt(File pptFile) {
+    private static XMLSlideShow openPpt() {
         XMLSlideShow ppt = null;
 
         try {
-            FileInputStream inputstream = new FileInputStream(pptFile);
+            File file = new File(EXAMPLE_PPT_NAME);
+            FileInputStream inputstream = new FileInputStream(file);
             ppt = new XMLSlideShow(inputstream);
         } catch (IOException ex) {
             System.err.println("La presentacion seleccionada no existe");
@@ -39,8 +41,9 @@ public class PPMaker {
         return ppt;
     }
 
-    private static void savePpt(File file, XMLSlideShow ppt) {
+    private static void savePpt(XMLSlideShow ppt) {
         try {
+            File file = new File(EXAMPLE_PPT_NAME);
             FileOutputStream out = new FileOutputStream(file);
             ppt.write(out);
             out.close();
@@ -51,8 +54,10 @@ public class PPMaker {
         }
     }
 
-    private static String replaceContent(String content, HashMap<String, String> data) {
-        return content.replace(String.format("@%s@", data.get("key")), data.get("value"));
+    private static void replaceContent(XSLFTextShape shape, SlideText data) {
+        String textInShape = shape.getText();
+        String newText = textInShape.replace(String.format("@%s@", data.key), data.value);
+        shape.setText(newText);
     }
 
     private static XSLFSlide copySlide(XMLSlideShow ppt, XSLFSlide srcSlide) {
@@ -62,55 +67,51 @@ public class PPMaker {
         return newSlide.importContent(srcSlide);
     }
 
-    private static ArrayList<DataRow> getDataFileContent() {
+    private static ArrayList<MySlide> getDataFileContent() {
         String content = Utility.readFile(DATA_FILE_NAME);
         String[] contentLines = content.split("\n");
-        ArrayList<DataRow> dataList = new ArrayList<>();
-        
+        ArrayList<MySlide> slidesData = new ArrayList<>();
+        MySlide mySlide = new MySlide();
+
         for (String contentLine : contentLines) {
+
+            if (contentLine.equals("\r")) {
+                slidesData.add(mySlide);
+                mySlide = new MySlide();
+                continue;
+            }
+
             String[] line = contentLine.split("=");
+
             try {
-                dataList.add(new DataRow(line[0], line[1]));
+                mySlide.replacementData.add(new SlideText(line[0], line[1]));
             } catch (IndexOutOfBoundsException ex) {
                 System.err.println("Malformed data file");
                 System.exit(-1);
             }
         }
-        return dataList;
+        return slidesData;
     }
 
     public static void main(String[] args) throws IOException {
 
+        XMLSlideShow ppt = openPpt();
+        ArrayList<MySlide> replacementData = getDataFileContent();
+        XSLFSlide templateSlide = ppt.getSlides().get(0);
 
-        /*
-            
-        File file = new File(EXAMPLE_PPT_NAME);
-        XMLSlideShow ppt = openPpt(file);
+        replacementData.forEach((slide) -> {
+            XSLFSlide copiedSlide = copySlide(ppt, templateSlide);
+            XSLFTextShape[] slidePlaceholders = copiedSlide.getPlaceholders();
 
-        ArrayList<DataRow> data = getDataFileContent();
-
-        XSLFSlide srcSlide = ppt.getSlides().get(0);
-            
-            for (int i = 0; i < 1; i++) {
-            XSLFSlide slide = copySlide(ppt, srcSlide);
-            
-            XSLFTextShape[] a= slide.getPlaceholders();
-            
-            System.out.println(a[0].getText());
-
-            XSLFTextShape title2 = slide.getPlaceholder(0);
-            title2.addNewTextParagraph().addNewTextRun().setText("BOO");
-            title2.addNewTextParagraph().addLineBreak();
-            title2.addNewTextParagraph().addNewTextRun().setText("BOO");
-            //            title2.setText("Second Title");
-
-            XSLFTextShape body2 = slide.getPlaceholder(1);
-            body2.clearText(); // unset any existing text
-            body2.addNewTextParagraph().addNewTextRun().setText("First paragraph");
-            body2.addNewTextParagraph().addNewTextRun().setText("Second paragraph");
-            body2.addNewTextParagraph().addNewTextRun().setText("Third paragraph");
+            for (XSLFTextShape slidePlaceholder : slidePlaceholders) {
+                for (SlideText slideText : slide.replacementData) {
+                    if (slidePlaceholder.getText().contains(slideText.key)) {
+                        replaceContent(slidePlaceholder, slideText);
+                    }
+                }
             }
-         */
-//        savePpt(f, ppt);
+        });
+
+        savePpt(ppt);
     }
 }
