@@ -58,4 +58,28 @@ public class Utility {
 
         return params;
     }
+
+    public static void helpMessage() {
+        System.out.println("PPT Maker");
+        System.out.println("Syntax: pptmaker [-o output-file] [-f template-file]");
+        System.out.println();
+        System.out.println("Input data file must be at the current directory named \"data.txt\"");
+        System.out.println();
+        System.out.println("Input data file must have the next structure: ");
+        
+        System.out.println("# # # # # # # # # # # # # # # # # # # ");
+        System.out.println("#key=value                          # ");
+        System.out.println("#other_key=other_value              # ");
+        System.out.println("#                                   # ");
+        System.out.println("#key=next_slide                     # ");
+        System.out.println("#other_key=the same other slide     # ");
+        System.out.println("#                                   # ");
+        System.out.println("#bla=something else..               # ");
+        System.out.println("#en so on=boo...                    # ");
+        System.out.println("#                                   # ");
+        System.out.println("# # # # # # # # # # # # # # # # # # # ");
+
+        System.exit(0);
+
+    }
 }

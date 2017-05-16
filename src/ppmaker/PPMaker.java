@@ -106,6 +106,11 @@ public class PPMaker {
     public static void main(String[] args) throws IOException {
 
         Map<String, List<String>> params = Utility.getArguments(args);
+        
+        // check for help
+        if (params.containsKey("h")) {
+            Utility.helpMessage();
+        }
 
         OUTPUT_PPT_NAME = params.getOrDefault("o", new ArrayList<String>() {
             {
@@ -118,6 +123,7 @@ public class PPMaker {
                 add(INPUT_PPT_NAME);
             }
         }).get(0);
+        
 
         XMLSlideShow ppt = openPpt();
         ArrayList<MySlide> replacementData = getDataFileContent();
