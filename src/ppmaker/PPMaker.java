@@ -10,6 +10,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
@@ -22,11 +24,12 @@ import org.apache.poi.xslf.usermodel.XSLFTextShape;
  */
 public class PPMaker {
 
-    final static String INPUT_PPT_NAME = "example1.pptx";
-    final static String OUTPUT_PPT_NAME = "output.pptx";
     final static String DATA_FILE_NAME = "data.txt";
     final static String STRING_FORMAT = "@%s@";
     final static int TEMPLATE_SLIDE_INDEX = 0;
+
+    static String INPUT_PPT_NAME = "template.pptx";
+    static String OUTPUT_PPT_NAME = "output.pptx";
 
     private static XMLSlideShow openPpt() {
         XMLSlideShow ppt = null;
@@ -44,6 +47,11 @@ public class PPMaker {
     }
 
     private static void savePpt(XMLSlideShow ppt) {
+
+        if (!OUTPUT_PPT_NAME.contains(".pptx")) {
+            OUTPUT_PPT_NAME += ".pptx";
+        }
+
         try {
             File file = new File(OUTPUT_PPT_NAME);
             FileOutputStream out = new FileOutputStream(file);
@@ -97,6 +105,20 @@ public class PPMaker {
 
     public static void main(String[] args) throws IOException {
 
+        Map<String, List<String>> params = Utility.getArguments(args);
+
+        OUTPUT_PPT_NAME = params.getOrDefault("o", new ArrayList<String>() {
+            {
+                add(OUTPUT_PPT_NAME);
+            }
+        }).get(0);
+
+        INPUT_PPT_NAME = params.getOrDefault("f", new ArrayList<String>() {
+            {
+                add(INPUT_PPT_NAME);
+            }
+        }).get(0);
+
         XMLSlideShow ppt = openPpt();
         ArrayList<MySlide> replacementData = getDataFileContent();
         XSLFSlide templateSlide = ppt.getSlides().get(TEMPLATE_SLIDE_INDEX);
@@ -113,7 +135,7 @@ public class PPMaker {
                 }
             }
         });
-        
+
         ppt.removeSlide(TEMPLATE_SLIDE_INDEX);
 
         savePpt(ppt);
