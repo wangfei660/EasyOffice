@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -24,19 +25,18 @@ public class Utility {
         try {
             content = new String(Files.readAllBytes(Paths.get(file)));
         } catch (IOException ex) {
-            System.err.println("Archivo de datos no encontrado");
-            System.err.println(ex.getMessage());
+            System.err.println("Archivo de datos no encontrado (.\\" +  file +")");
             System.exit(-1);
         }
 
         return content;
     }
 
-    public static Map<String, List<String>> getArguments(String[] args) {
+    public static Map<String, List<Object>> getArguments(String[] args) {
 
-        final Map<String, List<String>> params = new HashMap<>();
+        final Map<String, List<Object>> params = new HashMap<>();
 
-        List<String> options = null;
+        List<Object> options = null;
         for (int i = 0; i < args.length; i++) {
             final String a = args[i];
 
@@ -58,15 +58,23 @@ public class Utility {
 
         return params;
     }
+    public static void showExceptionInfo(boolean verbose, Exception ex){
+        if (verbose) {
+            System.err.println("Showing exception extra info:");
+            System.err.println(ex.getMessage());
+            System.err.println(ex.getLocalizedMessage());
+            System.err.println(Arrays.toString(ex.getStackTrace()));
+        }
+    }
 
     public static void helpMessage() {
         System.out.println("PPT Maker");
-        System.out.println("Syntax: pptmaker [-o output-file] [-f template-file]");
+        System.out.println("Syntax: pptmaker [-f template-file] [-o output-file] [-i template-index]");
         System.out.println();
         System.out.println("Input data file must be at the current directory named \"data.txt\"");
         System.out.println();
         System.out.println("Input data file must have the next structure: ");
-        
+
         System.out.println("# # # # # # # # # # # # # # # # # # # ");
         System.out.println("#key=value                          # ");
         System.out.println("#other_key=other_value              # ");
