@@ -1,9 +1,9 @@
-titulo=Primer titulo
-contenido=luego de comer algo
-
-titulo=Este es otro ejemplo
-contenido=Rayos! Shingeki
-
-titulo=Ni me acordaba de que hoy era que lo sacaban 
-contenido=xD
-
+titulo=Primer titul
+objetivo=luego de come
+#
+titulo=Priasdr titul
+objetivo=luegasdasd asdasda come
+#
+titulo=Primer titul
+objetivo=luego de come
+#

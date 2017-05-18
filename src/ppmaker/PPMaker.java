@@ -32,9 +32,9 @@ import org.apache.poi.xslf.usermodel.XSLFTextShape;
  */
 public class PPMaker {
 
-    final static String DATA_FILE_NAME = "data.txt";
     final static String STRING_FORMAT = "@%s@";
 
+    static String DATA_FILE_NAME = "data.txt";
     static int TEMPLATE_SLIDE_INDEX = 0;
     static String INPUT_PPT_NAME = "template.pptx";
     static String OUTPUT_PPT_NAME = "output.pptx";
@@ -111,15 +111,17 @@ public class PPMaker {
                 mySlide.replacementData.add(new SlideText(line[0], line[1]));
             } catch (IndexOutOfBoundsException ex) {
                 System.err.println("Archivo de datos con estructura no adecuada");
-                Utility.helpMessage();
+                Utility.getHelpMessage();
                 System.exit(-1);
             }
         }
         return slidesData;
     }
 
-    private static void evaluateArguments(String[] args) {
-        Map<String, List<Object>> params = Utility.getArguments(args);
+    private static void evaluateArguments(String[] args) throws NumberFormatException {
+        Map<String, List<Object>> params = null;
+
+        params = Utility.getArguments(args);
 
         // check for help
         if (params.containsKey("h")) {
@@ -129,6 +131,12 @@ public class PPMaker {
         if (params.containsKey("v")) {
             VERBOSE = true;
         }
+
+        DATA_FILE_NAME = params.getOrDefault("d", new ArrayList<Object>() {
+            {
+                add(DATA_FILE_NAME);
+            }
+        }).get(0).toString();
 
         OUTPUT_PPT_NAME = params.getOrDefault("o", new ArrayList<Object>() {
             {
@@ -192,9 +200,9 @@ public class PPMaker {
                 }
             }
         }
-        
+
         if (!somethingReplaced) {
-            System.out.println("Nada remplazado en slide " + TEMPLATE_SLIDE_INDEX +" ");
+            System.out.println("Nada remplazado en slide " + TEMPLATE_SLIDE_INDEX + " ");
             System.out.println("Desea especificar otro indice? \"pptmaker [-i indice]\"");
             System.exit(0);
         }
@@ -202,7 +210,13 @@ public class PPMaker {
 
     public static void main(String[] args) throws IOException {
 
-        evaluateArguments(args);
+        try {
+            evaluateArguments(args);
+        } catch (NumberFormatException ex) {
+            System.err.println("El parametro debe ser numerico");
+            Utility.getHelpMessage();
+            System.exit(-1);
+        }
 
         XMLSlideShow ppt = openPpt();
 
