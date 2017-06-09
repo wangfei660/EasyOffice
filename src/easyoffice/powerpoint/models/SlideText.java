@@ -3,24 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ppmaker;
-
-import java.util.ArrayList;
+package easyoffice.powerpoint.models;
 
 /**
  *
  * @author Freddie
  */
-public class MySlide {
 
-    public ArrayList<SlideText> replacementData;
-    
-    public MySlide(){
-        replacementData = new ArrayList<>();
-    }
-}
-
-class SlideText {
+public class SlideText {
 
     public String key;
     public String value;
@@ -32,5 +22,5 @@ class SlideText {
         this.key = key;
         this.value = value;
     }
-
 }
+

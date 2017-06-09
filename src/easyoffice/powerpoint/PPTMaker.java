@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ppmaker;
+package easyoffice.powerpoint;
 
+import easyoffice.powerpoint.models.Slide;
+import easyoffice.powerpoint.models.SlideText;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,7 +19,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.sl.usermodel.StrokeStyle;
 
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFShape;
@@ -25,12 +26,13 @@ import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFSlideLayout;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
 import org.apache.poi.xslf.usermodel.XSLFTextShape;
+import easyoffice.Utility;
 
 /**
  *
  * @author Freddie
  */
-public class PPMaker {
+public class PPTMaker {
 
     final static String STRING_FORMAT = "@%s@";
 
@@ -91,17 +93,17 @@ public class PPMaker {
         return newSlide.importContent(srcSlide);
     }
 
-    private static ArrayList<MySlide> getDataFileContent() {
+    private static ArrayList<Slide> getDataFileContent() {
         String content = Utility.readFile(DATA_FILE_NAME);
         String[] contentLines = content.split("\n");
-        ArrayList<MySlide> slidesData = new ArrayList<>();
-        MySlide mySlide = new MySlide();
+        ArrayList<Slide> slidesData = new ArrayList<>();
+        Slide mySlide = new Slide();
 
         for (String contentLine : contentLines) {
 
             if (contentLine.equals("#\r") || contentLine.equals("#")) {
                 slidesData.add(mySlide);
-                mySlide = new MySlide();
+                mySlide = new Slide();
                 continue;
             }
 
@@ -160,7 +162,7 @@ public class PPMaker {
     private static void setFirstSlideInfo(XMLSlideShow ppt) {
         XSLFSlide firstSlide = ppt.getSlides().get(0);
 
-        MySlide mySlide = new MySlide();
+        Slide mySlide = new Slide();
         mySlide.replacementData.add(new SlideText("Nombre_Mes", LocalDate.now().getMonth().getDisplayName(TextStyle.FULL.FULL, new Locale("es", "ES"))));
         mySlide.replacementData.add(new SlideText("Año", String.valueOf(LocalDate.now().getYear())));
 
@@ -179,11 +181,11 @@ public class PPMaker {
     }
 
     private static void setEngineData(XMLSlideShow ppt) {
-        ArrayList<MySlide> replacementData = getDataFileContent();
+        ArrayList<Slide> replacementData = getDataFileContent();
         XSLFSlide templateSlide = ppt.getSlides().get(TEMPLATE_SLIDE_INDEX);
         boolean somethingReplaced = false;
 
-        for (MySlide slide : replacementData) {
+        for (Slide slide : replacementData) {
             XSLFSlide copiedSlide = copySlide(ppt, templateSlide);
             List<XSLFShape> slideShapes = copiedSlide.getShapes();
 
