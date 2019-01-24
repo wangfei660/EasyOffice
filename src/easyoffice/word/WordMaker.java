@@ -16,7 +16,7 @@ import java.util.Set;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
-import easyoffice.Utility;
+import easyoffice.util.Utility;
 
 /**
  *
@@ -64,7 +64,7 @@ public class WordMaker {
 
         replaceText(doc, data);
 
-        savePpt(doc);
+        saveDoc(doc);
     }
 
     private static void replaceText(XWPFDocument doc, HashMap<String, String> data) {
@@ -84,7 +84,7 @@ public class WordMaker {
         }
     }
 
-    private static void savePpt(XWPFDocument doc) {
+    private static void saveDoc(XWPFDocument doc) {
 
         if (!OUTPUT_PPT_NAME.contains(".docx")) {
             OUTPUT_PPT_NAME += ".docx";
