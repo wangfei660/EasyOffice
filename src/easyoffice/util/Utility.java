@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package easyoffice;
+package easyoffice.util;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,6 +19,11 @@ import java.util.Map;
  * @author Freddie
  */
 public class Utility {
+    
+    public static String cleanStr(String inputString){
+        return inputString.replaceAll("\t", "")
+                .replaceAll("\r", "").trim();
+    }
 
     public static String readFile(String file) {
         String content = null;
